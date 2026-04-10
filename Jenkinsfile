@@ -45,21 +45,21 @@ stage('Tag & Push to ECR') {
 }
 
 
-// stage('Deploy to EKS') {
-//   steps {
-//     sh """
-//       aws eks update-kubeconfig \
-//       --region ${AWS_REGION} \
-//       --name ihms-cluster
+stage('Deploy to EKS') {
+  steps {
+    sh """
+      aws eks update-kubeconfig \
+      --region ${AWS_REGION} \
+      --name ihms-cluster
 
-//       kubectl set image deployment/ihms-frontend \
-//       ihms=${ECR}/${IMAGE_NAME}:${IMAGE_TAG} \
-//       -n ihms
+      kubectl set image deployment/appolo-image \
+      ihms=${ECR}/${IMAGE_NAME}:${IMAGE_TAG} \
+      -n ihms
 
-//       kubectl rollout status deployment/ihms-frontend -n ihms
-//     """
-//   }
-// }
+      kubectl rollout status deployment/appolo-image -n appolo
+    """
+  }
+}
 
 }
 
