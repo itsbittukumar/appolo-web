@@ -54,7 +54,7 @@ stage('Deploy to EKS') {
 
       kubectl set image deployment/appolo-image \
       ihms=${ECR}/${IMAGE_NAME}:${IMAGE_TAG} \
-      -n ihms
+      -n appolo
 
       kubectl rollout status deployment/appolo-image -n appolo
     """
