@@ -3,11 +3,10 @@ agent any
 
 environment {
 AWS_REGION = "ap-south-1"
-ACCOUNT_ID = "453183019852"
-IMAGE_NAME = "ihms-frontend"
+ACCOUNT_ID = "659420055085"
+IMAGE_NAME = "appolo-image"
 IMAGE_TAG = "${BUILD_NUMBER}"
 ECR = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-NEXUS_URL = "http://172.31.15.97:8081/repository/ihms-repo"
 }
 
 stages {
@@ -46,21 +45,21 @@ stage('Tag & Push to ECR') {
 }
 
 
-stage('Deploy to EKS') {
-  steps {
-    sh """
-      aws eks update-kubeconfig \
-      --region ${AWS_REGION} \
-      --name ihms-cluster
+// stage('Deploy to EKS') {
+//   steps {
+//     sh """
+//       aws eks update-kubeconfig \
+//       --region ${AWS_REGION} \
+//       --name ihms-cluster
 
-      kubectl set image deployment/ihms-frontend \
-      ihms=${ECR}/${IMAGE_NAME}:${IMAGE_TAG} \
-      -n ihms
+//       kubectl set image deployment/ihms-frontend \
+//       ihms=${ECR}/${IMAGE_NAME}:${IMAGE_TAG} \
+//       -n ihms
 
-      kubectl rollout status deployment/ihms-frontend -n ihms
-    """
-  }
-}
+//       kubectl rollout status deployment/ihms-frontend -n ihms
+//     """
+//   }
+// }
 
 }
 
