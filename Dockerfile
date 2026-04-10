@@ -1,7 +1,7 @@
-# FROM nginx:stable-alpine
-# COPY index.html /usr/share/nginx/html/index.html
-# EXPOSE 80
-# CMD ["nginx", "-g", "daemon off;"]
+FROM nginx:stable-alpine
+COPY index.html /usr/share/nginx/html/index.html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
 
 
 # Stage 1: Builder
@@ -33,11 +33,11 @@
 # CMD ["nginx", "-g", "daemon off;"]
 
 
-FROM nginx:1.25-alpine
+# FROM nginx:1.25-alpine
 
-COPY index.html /usr/share/nginx/html/index.html
+# COPY index.html /usr/share/nginx/html/index.html
 
-EXPOSE 80
+# EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
 
