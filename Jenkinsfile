@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = "ap-south-1"
-        ACCOUNT_ID = "659420055085"
-        IMAGE_NAME = "appolo-image"
-        IMAGE_TAG = "${BUILD_NUMBER}"
-        ECR = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        AWS_REGION   = "ap-south-1"
+        ACCOUNT_ID   = "659420055085"
+        IMAGE_NAME   = "appolo-image"
+        IMAGE_TAG    = "${BUILD_NUMBER}"
+        ECR          = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         CLUSTER_NAME = "appolo-cluster"
-        NAMESPACE = "appolo"
+        NAMESPACE    = "appolo"
     }
 
     stages {
@@ -49,24 +49,30 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 sh """
-                echo "🔹 Update kubeconfig"
+                echo "🔹 Configure kubeconfig"
                 aws eks update-kubeconfig \
                 --region ${AWS_REGION} \
                 --name ${CLUSTER_NAME}
 
-                echo "🔹 Create namespace if not exists"
+                echo "🔹 Ensure namespace exists"
                 kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
 
-                echo "🔹 Replace image in deployment.yaml"
-                sed -i "s|IMAGE_PLACEHOLDER|${ECR}/${IMAGE_NAME}:${IMAGE_TAG}|g" k8s/deployment.yaml
+                echo "🔹 First-time deployment (if not exists)"
+                kubectl apply -f k8s/deployment.yaml || true
+                kubectl apply -f k8s/service.yaml || true
 
-                echo "🔹 Apply Kubernetes manifests"
-                kubectl apply -f k8s/
+                echo "🔹 Update image in deployment"
+                kubectl set image deployment/appolo-deployment \
+                appolo=${ECR}/${IMAGE_NAME}:${IMAGE_TAG} \
+                -n ${NAMESPACE}
 
-                echo "🔹 Check rollout status"
+                echo "🔹 Force rollout restart"
+                kubectl rollout restart deployment/appolo-deployment -n ${NAMESPACE}
+
+                echo "🔹 Wait for rollout to complete"
                 kubectl rollout status deployment/appolo-deployment -n ${NAMESPACE}
 
-                echo "🔹 Get service details"
+                echo "🔹 Get service URL"
                 kubectl get svc -n ${NAMESPACE}
                 """
             }
@@ -75,10 +81,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Pipeline completed successfully 🚀"
+            echo "✅ Deployment Successful 🚀"
         }
         failure {
-            echo "❌ Pipeline failed"
+            echo "❌ Pipeline Failed"
         }
     }
 }
