@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: appolo-service
+  namespace: appolo
+  labels:
+    app: appolo
+spec:
+  type: LoadBalancer
+  selector:
+    app: appolo
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
