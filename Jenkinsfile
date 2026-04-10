@@ -14,7 +14,7 @@ stages {
 stage('Checkout') {
   steps {
     git branch: 'main',
-        url: 'https://github.com/bk-thakur/ihms-frontend.git'
+        url: 'https://github.com/bk-thakur/appolo-web.git'
   }
 }
 
