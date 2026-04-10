@@ -4,7 +4,6 @@
 # CMD ["nginx", "-g", "daemon off;"]
 
 
-# -------------------------
 # Stage 1: Builder
 # -------------------------
 FROM nginx:1.25-alpine AS builder
