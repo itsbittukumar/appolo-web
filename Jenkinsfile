@@ -50,7 +50,7 @@ stage('Deploy to EKS') {
     sh """
       aws eks update-kubeconfig \
       --region ${AWS_REGION} \
-      --name ihms-cluster
+      --name appolo-cluster
 
       kubectl set image deployment/appolo-image \
       ihms=${ECR}/${IMAGE_NAME}:${IMAGE_TAG} \
