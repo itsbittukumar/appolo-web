@@ -1,7 +1,7 @@
-FROM nginx:stable-alpine
-COPY index.html /usr/share/nginx/html/index.html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# FROM nginx:stable-alpine
+# COPY index.html /usr/share/nginx/html/index.html
+# EXPOSE 80
+# CMD ["nginx", "-g", "daemon off;"]
 
 
 # Stage 1: Builder
@@ -40,4 +40,52 @@ CMD ["nginx", "-g", "daemon off;"]
 # EXPOSE 80
 
 # CMD ["nginx", "-g", "daemon off;"]
+
+
+
+
+
+# Intentionally Vulnerable Dockerfile
+# FOR SECURITY TESTING ONLY
+
+FROM ubuntu:16.04
+
+# Run as root (bad practice)
+USER root
+
+# Install outdated and unnecessary packages
+RUN apt-get update && apt-get install -y \
+    telnet \
+    ftp \
+    net-tools \
+    wget \
+    curl \
+    vim \
+    openssh-server \
+    apache2 \
+    python \
+    && rm -rf /var/lib/apt/lists/*
+
+# Hardcoded credentials
+ENV DB_USER=admin
+ENV DB_PASSWORD=Password123
+
+# Expose multiple ports unnecessarily
+EXPOSE 22
+EXPOSE 80
+EXPOSE 8080
+
+# Create a weak user password
+RUN useradd testuser && echo "testuser:test123" | chpasswd
+
+# Give excessive privileges
+RUN chmod 777 /tmp
+
+# Copy application files
+COPY . /app
+
+# Run container as root
+WORKDIR /app
+
+CMD ["/bin/bash"]
 
