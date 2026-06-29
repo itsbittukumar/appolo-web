@@ -22,13 +22,12 @@
 
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
   name: appolo-deployment
   namespace: appolo
 
 spec:
-  replicas: 2
+  replicas: 1
 
   selector:
     matchLabels:
@@ -43,6 +42,7 @@ spec:
       containers:
       - name: appolo
         image: appolo-image:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
+
         ports:
         - containerPort: 80
